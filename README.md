@@ -6,7 +6,7 @@ Sistema web de autoatendimento para restaurantes. O cliente navega pelo cardápi
 
 1. Instale o JDK 21, deixe `java` no PATH e instale o SQL Server Express. Deixe o serviço do SQL Server iniciado, com autenticação mista e TCP/IP habilitados na porta 1433. A conta do Windows precisa poder criar bancos e logins nessa instância.
 2. Extraia a pasta completa do projeto e abra `Executar.cmd`.
-3. Digite a senha que deseja usar na **Área da equipe** durante essa execução. Aguarde o cardápio abrir no navegador em <http://127.0.0.1:5000/>. Para encerrar, pressione **Ctrl+C** na janela do terminal.
+3. Aguarde o cardápio abrir no navegador em <http://127.0.0.1:5000/>. A senha padrão da **Área da equipe** é `123`. Para usar outra senha, defina `TOTEM_ADMIN_SENHA` antes de abrir o inicializador. Para encerrar, pressione **Ctrl+C** na janela do terminal.
 
 O inicializador executa os scripts SQL, configura um login próprio da aplicação e compila o projeto. O primeiro build precisa de internet para baixar o Maven e as dependências. O Windows guarda a credencial SQL gerada em `%LOCALAPPDATA%\BrasaDeRua`, vinculada ao usuário e ao computador. Se sua instância usar outra porta, defina `BRASA_SQL_PORTA` antes de abrir o inicializador.
 
@@ -32,17 +32,18 @@ GRANT EXECUTE ON OBJECT::dbo.FinalizarPedido TO totem_app;
 GO
 ```
 
-4. Abra o PowerShell nesta pasta, informe as senhas escolhidas e inicie o projeto.
+4. Abra o PowerShell nesta pasta, informe a senha do SQL Server e inicie o projeto. A senha padrão da área da equipe é `123` em qualquer modo de execução. Para alterá-la, defina `TOTEM_ADMIN_SENHA` antes de iniciar.
 
 ```powershell
 $env:TOTEM_SQL_SENHA = 'senha-do-login-sql'
-$env:TOTEM_ADMIN_SENHA = 'senha-da-equipe'
 .\mvnw.cmd spring-boot:run
 ```
 
 O Maven Wrapper baixa o Maven na primeira execução. Em Linux/macOS, use `sh ./mvnw spring-boot:run`. Abra <http://127.0.0.1:5000>. Confirme um pedido como visitante ou entre em uma conta para usar o histórico. Use **Área da equipe** com a senha configurada para acessar a gestão.
 
 A configuração padrão espera `totem_app` em `localhost:1433`. Para mudar a conexão, defina `TOTEM_SQL_USUARIO` e/ou `TOTEM_SQL_URL` (exemplo `jdbc:sqlserver://localhost:1435;databaseName=Totem_Atendimento;encrypt=true;trustServerCertificate=true`). Em uma implantação com certificado confiável, use `trustServerCertificate=false` e habilite `TOTEM_HTTPS=true` sob HTTPS.
+
+Se aparecer **Falha de logon do usuário 'totem_app'**, confira se `TOTEM_SQL_SENHA` contém a senha do login criado no SQL Server. No Windows, você também pode encerrar a execução atual e abrir `Executar.cmd`, que prepara e usa uma credencial SQL própria. A senha `123` é da área da equipe.
 
 Para atualizar um banco existente, execute novamente `banco/01-estrutura.sql`. O vínculo com o cliente passa a ser opcional e os pedidos existentes são preservados.
 

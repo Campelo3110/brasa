@@ -96,11 +96,6 @@ GRANT EXECUTE ON OBJECT::dbo.FinalizarPedido TO [$login];
     $env:TOTEM_HOST = '127.0.0.1'
     $env:TOTEM_PORTA = '5000'
     $env:TOTEM_HTTPS = 'false'
-    while ([string]::IsNullOrWhiteSpace($env:TOTEM_ADMIN_SENHA)) {
-        $secret = Read-Host 'Escolha a senha da area da equipe para esta sessao' -AsSecureString
-        $env:TOTEM_ADMIN_SENHA = [System.Net.NetworkCredential]::new('', $secret).Password
-    }
-
     Write-Host 'Compilando o projeto...'
     & .\mvnw.cmd -B package
     if ($LASTEXITCODE -ne 0) { throw 'O Maven nao conseguiu compilar o projeto.' }
