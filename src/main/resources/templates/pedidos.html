@@ -1,0 +1,16 @@
+<!doctype html>
+<html lang="pt-BR" xmlns:th="http://www.thymeleaf.org" th:replace="~{layout :: pagina('Pedidos', ~{::conteudo})}">
+<th:block th:fragment="conteudo">
+<section class="pagina">
+  <th:block th:if="${admin}" th:insert="~{menu-gestao :: menu}"></th:block>
+  <a th:unless="${admin}" class="retorno" href="/">← Voltar ao cardápio</a>
+  <h1 th:text="${admin == true ? 'Pedidos do restaurante' : 'Meus pedidos'}"></h1>
+  <article th:each="pedido : ${pedidos}" class="painel linha-pedido">
+    <div><h2 th:text="|Pedido #${pedido.id}|"></h2><p><span th:text="${#dates.format(pedido.data, 'dd/MM/yyyy HH:mm')}"></span><span th:if="${admin}" th:text="| · ${pedido.cliente}|"></span></p></div>
+    <div><span class="estado" th:text="${pedido.status}"></span> <strong th:text="|R$ ${#numbers.formatDecimal(pedido.total,1,'POINT',2,'COMMA')}|"></strong></div>
+    <a class="botao contorno" th:href="@{/pedidos/{id}(id=${pedido.id})}">Ver detalhes</a>
+  </article>
+  <p th:if="${pedidos.empty}" class="painel">Ainda não há pedidos por aqui.</p>
+</section>
+</th:block>
+</html>

@@ -1,0 +1,50 @@
+<!doctype html>
+<html lang="pt-BR" xmlns:th="http://www.thymeleaf.org" th:replace="~{layout :: pagina('Cardápio', ~{::conteudo})}">
+<th:block th:fragment="conteudo">
+<section class="hero">
+  <div class="hero-texto">
+    <span class="etiqueta">Autoatendimento</span>
+    <h1>Da brasa<br>pro seu prato.</h1>
+    <p><span th:if="${cliente}" th:text="|Olá, ${cliente}! |"></span>Escolha seus favoritos e monte seu pedido.</p>
+    <a class="botao claro" href="#cardapio">Ver cardápio <span aria-hidden="true">↓</span></a>
+  </div>
+</section>
+<div class="vitrine" id="cardapio">
+  <section aria-labelledby="titulo-cardapio">
+    <div class="secao-titulo"><h2 id="titulo-cardapio">Cardápio</h2></div>
+    <nav th:unless="${produtos.empty}" class="filtros" aria-label="Categorias">
+      <button type="button" class="filtro" data-filtro="todos" aria-pressed="true">Todos</button>
+      <button th:each="grupo : ${grupos}" type="button" class="filtro" th:attr="data-filtro=${grupo.key}" aria-pressed="false" th:text="${grupo.value}">Categoria</button>
+    </nav>
+    <div class="grade">
+      <article th:each="produto : ${produtos}" class="produto"
+               th:attr="data-categoria=${produto.categoria},data-produto=${produto.id},data-nome=${produto.nome},data-centavos=${produto.preco * 100}">
+        <img th:if="${produto.foto}" th:src="@{/fotos/{foto}(foto=${produto.foto})}" alt="" loading="lazy">
+        <div th:unless="${produto.foto}" class="sem-foto" aria-hidden="true">✷</div>
+        <div class="produto-texto">
+          <span class="grupo" th:text="${produto.grupo}"></span>
+          <h3 th:text="${produto.nome}"></h3>
+          <p th:text="${produto.descricao}"></p>
+          <div class="produto-acao">
+            <strong th:text="|R$ ${#numbers.formatDecimal(produto.preco,1,'POINT',2,'COMMA')}|"></strong>
+            <button type="button" class="adicionar" th:attr="aria-label=|Adicionar ${produto.nome}|" title="Adicionar ao pedido">+</button>
+          </div>
+        </div>
+      </article>
+    </div>
+    <p th:if="${produtos.empty}" class="painel">O cardápio está sem produtos disponíveis neste momento.</p>
+  </section>
+  <aside class="pedido painel" id="carrinho" aria-labelledby="titulo-pedido">
+    <div class="pedido-titulo"><h2 id="titulo-pedido">Seu pedido</h2><span id="contador">0 itens</span></div>
+    <p id="carrinho-aviso" role="status"></p>
+    <div id="itens-carrinho"></div>
+    <form method="post" action="/pedidos" id="form-pedido">
+      <input type="hidden" name="csrf" th:value="${session.csrf}">
+      <div id="campos-itens"></div>
+      <div class="total"><span>Total</span><strong id="total">R$ 0,00</strong></div>
+      <button class="primario inteiro" id="confirmar" disabled>Confirmar pedido</button>
+    </form>
+  </aside>
+</div>
+</th:block>
+</html>

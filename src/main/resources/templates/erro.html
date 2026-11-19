@@ -1,0 +1,10 @@
+<!doctype html>
+<html lang="pt-BR" xmlns:th="http://www.thymeleaf.org" th:replace="~{layout :: pagina('Atenção', ~{::conteudo})}">
+<th:block th:fragment="conteudo">
+<section class="painel formulario">
+  <h1 th:text="${status == 404 ? 'Pedido ou página indisponível' : 'Algo aconteceu'}"></h1>
+  <p th:text="${mensagem != null ? mensagem : 'Volte ao cardápio para continuar.'}"></p>
+  <a class="botao primario" href="/">Voltar ao cardápio</a>
+</section>
+</th:block>
+</html>

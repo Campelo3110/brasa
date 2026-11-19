@@ -1,0 +1,64 @@
+<!doctype html>
+<html lang="pt-BR" xmlns:th="http://www.thymeleaf.org" th:replace="~{layout :: pagina('Gestão', ~{::conteudo})}">
+<th:block th:fragment="conteudo">
+<section class="pagina">
+  <nav th:replace="~{menu-gestao :: menu}"></nav>
+  <h1 th:text="${#strings.capitalize(tipo)}"></h1>
+  <div class="gestao">
+    <section class="painel">
+      <h2>Registros</h2>
+      <div class="rolagem">
+        <table>
+          <thead><tr><th scope="col">Nome</th><th th:if="${tipo == 'clientes'}" scope="col">E-mail</th><th th:if="${tipo == 'produtos'}" scope="col">Preço</th><th scope="col">Situação</th><th scope="col">Ações</th></tr></thead>
+          <tbody>
+            <tr th:each="item : ${registros}">
+              <td th:text="${item.nome}"></td>
+              <td th:if="${tipo == 'clientes'}" th:text="${item.email}"></td>
+              <td th:if="${tipo == 'produtos'}" th:text="|R$ ${#numbers.formatDecimal(item.preco,1,'POINT',2,'COMMA')}|"></td>
+              <td th:text="${tipo == 'produtos' ? item.disponibilidade : (item.ativo ? 'Ativo' : 'Inativo')}"></td>
+              <td class="acoes"><a th:href="@{/gestao/{tipo}#editor(tipo=${tipo},editar=${item.id})}">Editar</a>
+                <form method="post" th:action="@{/gestao/{tipo}(tipo=${tipo})}" data-remover>
+                  <input type="hidden" name="csrf" th:value="${session.csrf}">
+                  <input type="hidden" name="id" th:value="${item.id}">
+                  <button class="link" name="acao" value="remover">Remover</button>
+                </form>
+              </td>
+            </tr>
+            <tr th:if="${registros.empty}"><td th:colspan="${tipo == 'categorias' ? 3 : 4}">Nenhum registro cadastrado.</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+    <section class="painel" id="editor">
+      <h2 th:text="${registro['id'] == null ? 'Novo registro' : 'Editar registro'}"></h2>
+      <form method="post" th:action="@{/gestao/{tipo}(tipo=${tipo})}" class="campos">
+        <input type="hidden" name="csrf" th:value="${session.csrf}">
+        <input type="hidden" name="id" th:value="${registro['id']}">
+        <label>Nome<input name="nome" maxlength="255" th:value="${registro['nome']}" required></label>
+        <th:block th:if="${tipo == 'clientes'}">
+          <label>CPF<input name="cpf" inputmode="numeric" maxlength="14" th:value="${registro['cpf']}" required></label>
+          <label>E-mail<input name="email" type="email" maxlength="255" th:value="${registro['email']}" required></label>
+          <label><span th:text="${registro['id'] == null ? 'Senha' : 'Nova senha (opcional)'}"></span><input name="senha" type="password" autocomplete="new-password" minlength="8" maxlength="72" th:required="${registro['id'] == null}"></label>
+        </th:block>
+        <th:block th:if="${tipo == 'produtos'}">
+          <label>Descrição<textarea name="descricao" maxlength="255" required th:text="${registro['descricao']}"></textarea></label>
+          <label>Preço (R$)<input name="preco" type="number" min="0.01" max="99999999.99" step="0.01" th:value="${registro['preco']}" required></label>
+          <label><span id="rotulo-categoria">Categoria</span><select name="categoria" aria-labelledby="rotulo-categoria" required>
+            <option value="">Selecione</option>
+            <option th:each="categoria : ${categorias}" th:value="${categoria.id}" th:selected="${registro['categoria'] == categoria.id}" th:text="${categoria.nome}"></option>
+          </select></label>
+          <label><span id="rotulo-disponibilidade">Disponibilidade</span><select name="disponibilidade" aria-labelledby="rotulo-disponibilidade">
+            <option th:each="opcao : ${ {'Disponível', 'Indisponível'} }" th:selected="${registro['disponibilidade'] == opcao}" th:text="${opcao}"></option>
+          </select></label>
+        </th:block>
+        <label th:unless="${tipo == 'produtos'}"><span id="rotulo-situacao">Situação</span><select name="ativo" aria-labelledby="rotulo-situacao">
+          <option value="1">Ativo</option><option value="0" th:selected="${registro['ativo'] == false}">Inativo</option>
+        </select></label>
+        <button class="primario inteiro">Salvar</button>
+        <a th:if="${registro['id']}" th:href="@{/gestao/{tipo}(tipo=${tipo})}">Cancelar edição</a>
+      </form>
+    </section>
+  </div>
+</section>
+</th:block>
+</html>

@@ -1,0 +1,24 @@
+<!doctype html>
+<html lang="pt-BR" xmlns:th="http://www.thymeleaf.org" th:replace="~{layout :: pagina('Detalhes do pedido', ~{::conteudo})}">
+<th:block th:fragment="conteudo">
+<section class="painel formulario detalhe" th:attr="data-confirmado=${confirmado == true ? 'sim' : null}">
+  <a th:unless="${visitante}" class="retorno" th:href="${session.admin == true ? '/gestao/pedidos' : '/historico'}">← Voltar aos pedidos</a>
+  <p th:if="${visitante}">Use este número para retirar seu pedido.</p>
+  <h1 th:text="|Pedido #${pedido.id}|"></h1>
+  <p th:text="|${#dates.format(pedido.data, 'dd/MM/yyyy HH:mm')} · ${pedido.status}|"></p>
+  <ul class="itens-detalhe">
+    <li th:each="item : ${itens}" th:attr="data-produto=${item.produto},data-quantidade=${item.quantidade}">
+      <div><strong th:text="|${item.quantidade} × ${item.nome}|"></strong>
+      <small th:text="|R$ ${#numbers.formatDecimal(item.preco,1,'POINT',2,'COMMA')} por unidade|"></small></div>
+      <span th:text="|R$ ${#numbers.formatDecimal(item.subtotal,1,'POINT',2,'COMMA')}|"></span>
+    </li>
+  </ul>
+  <div class="total"><span>Total</span><strong th:text="|R$ ${#numbers.formatDecimal(pedido.total,1,'POINT',2,'COMMA')}|"></strong></div>
+  <a th:if="${!visitante and session.admin != true}" class="botao primario inteiro" href="/#carrinho" data-repetir>Repetir pedido</a>
+  <form th:if="${visitante}" method="post" action="/novo-pedido" data-sair>
+    <input type="hidden" name="csrf" th:value="${session.csrf}">
+    <button class="primario inteiro">Novo pedido</button>
+  </form>
+</section>
+</th:block>
+</html>

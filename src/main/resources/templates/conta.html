@@ -1,0 +1,24 @@
+<!doctype html>
+<html lang="pt-BR" xmlns:th="http://www.thymeleaf.org" th:replace="~{layout :: pagina('Entrar', ~{::conteudo})}">
+<th:block th:fragment="conteudo">
+<section class="painel formulario">
+  <a class="retorno" href="/">← Voltar ao cardápio</a>
+  <h1 th:text="${admin == true ? 'Acesso da equipe' : (cadastro == true ? 'Crie sua conta' : 'Entre na sua conta')}"></h1>
+  <p th:unless="${admin}">Confirme seus pedidos e consulte seu histórico.</p>
+  <form method="post" th:action="${admin == true ? '/gestao/entrar' : '/conta'}" class="campos">
+    <input type="hidden" name="csrf" th:value="${session.csrf}">
+    <th:block th:if="${cadastro}">
+      <input type="hidden" name="modo" value="cadastro">
+      <label>Nome<input name="nome" autocomplete="name" th:value="${campos['nome']}" maxlength="255" required></label>
+      <label>CPF<input name="cpf" inputmode="numeric" placeholder="000.000.000-00" maxlength="14" th:value="${campos['cpf']}" required></label>
+    </th:block>
+    <label th:unless="${admin}">E-mail<input type="email" name="email" autocomplete="email" th:value="${campos['email']}" maxlength="255" required></label>
+    <label>Senha<input type="password" name="senha" th:autocomplete="${cadastro == true ? 'new-password' : 'current-password'}" th:attr="minlength=${cadastro == true ? 8 : null},maxlength=${admin == true ? 256 : 72}" required></label>
+    <small th:if="${cadastro}">Use pelo menos 8 caracteres.</small>
+    <button class="primario inteiro" th:text="${cadastro == true ? 'Criar conta' : 'Entrar'}"></button>
+  </form>
+  <p th:if="${cadastro}">Já tem conta? <a href="/conta">Entrar</a></p>
+  <p th:if="${admin == null and cadastro == false}">Primeiro pedido? <a href="/conta?modo=cadastro">Criar conta</a></p>
+</section>
+</th:block>
+</html>

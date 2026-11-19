@@ -1,0 +1,5 @@
+<nav xmlns:th="http://www.thymeleaf.org" th:fragment="menu" class="filtros" aria-label="Área da equipe">
+  <a th:each="link : ${ {'produtos', 'categorias', 'clientes', 'pedidos'} }" class="botao contorno"
+     th:href="@{/gestao/{tipo}(tipo=${link})}" th:attr="aria-current=${tipo == link ? 'page' : null}"
+     th:text="${#strings.capitalize(link)}"></a>
+</nav>

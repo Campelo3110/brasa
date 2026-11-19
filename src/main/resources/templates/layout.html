@@ -1,0 +1,32 @@
+<!doctype html>
+<html lang="pt-BR" xmlns:th="http://www.thymeleaf.org" th:fragment="pagina(titulo, conteudo)">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title th:text="${titulo + ' | Brasa de Rua'}">Brasa de Rua</title>
+  <link rel="stylesheet" href="/estilo.css">
+</head>
+<body>
+<header class="topo">
+  <div class="largura linha-topo">
+    <a class="marca" href="/"><span aria-hidden="true">✷</span> Brasa de Rua</a>
+    <nav aria-label="Navegação principal">
+      <a th:if="${session.admin}" href="/gestao/produtos">Painel de gestão</a>
+      <a th:if="${session.cliente}" href="/historico">Meus pedidos</a>
+      <a th:unless="${session.admin != null or session.cliente != null}" class="botao contorno" href="/conta">Entrar para usar histórico</a>
+      <form th:if="${session.admin != null or session.cliente != null}" method="post" action="/sair" data-sair>
+        <input type="hidden" name="csrf" th:value="${session.csrf}">
+        <button class="contorno">Sair</button>
+      </form>
+    </nav>
+  </div>
+</header>
+<main class="largura">
+  <p th:if="${erro}" th:text="${erro}" class="aviso erro" role="alert"></p>
+  <p th:if="${sucesso}" th:text="${sucesso}" class="aviso sucesso" role="status"></p>
+  <th:block th:replace="${conteudo}"></th:block>
+</main>
+<footer class="largura rodape"><span>Brasa de Rua · Autoatendimento</span><a href="/gestao/produtos">Área da equipe</a></footer>
+<script src="/carrinho.js" defer></script>
+</body>
+</html>
