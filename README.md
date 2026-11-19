@@ -2,7 +2,15 @@
 
 Sistema web de autoatendimento para restaurantes. O cliente navega pelo cardápio, monta o pedido, confirma a compra sem conta e recebe o número para retirada. O cliente identificado pode repetir um pedido do histórico. A equipe gerencia clientes, categorias e produtos e consulta os pedidos registrados.
 
-## Executar
+## Executar no Windows com dois cliques
+
+1. Instale o JDK 21, deixe `java` no PATH e instale o SQL Server Express. Deixe o serviço do SQL Server iniciado, com autenticação mista e TCP/IP habilitados na porta 1433. A conta do Windows precisa poder criar bancos e logins nessa instância.
+2. Extraia a pasta completa do projeto e abra `Executar.cmd`.
+3. Digite a senha que deseja usar na **Área da equipe** durante essa execução. Aguarde o cardápio abrir no navegador em <http://127.0.0.1:5000/>. Para encerrar, pressione **Ctrl+C** na janela do terminal.
+
+O inicializador executa os scripts SQL, configura um login próprio da aplicação e compila o projeto. O primeiro build precisa de internet para baixar o Maven e as dependências. O Windows guarda a credencial SQL gerada em `%LOCALAPPDATA%\BrasaDeRua`, vinculada ao usuário e ao computador. Se sua instância usar outra porta, defina `BRASA_SQL_PORTA` antes de abrir o inicializador.
+
+## Executar com configuração manual
 
 Pré-requisitos: JDK 21, SQL Server 2022 Express ou edição equivalente com TCP/IP e uma ferramenta SQL, como o SSMS.
 
